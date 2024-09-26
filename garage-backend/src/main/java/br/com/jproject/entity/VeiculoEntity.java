@@ -1,9 +1,6 @@
 package br.com.jproject.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "veiculo")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -25,6 +22,7 @@ public class VeiculoEntity {
     private String veiculo;
     private String marca;
     private int ano;
+    private String cor;
     private String descricao;
     private boolean vendido;
     private LocalDateTime created;
