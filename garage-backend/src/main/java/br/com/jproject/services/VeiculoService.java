@@ -5,6 +5,7 @@ import br.com.jproject.dtos.request.VeiculoRequestDTO;
 import br.com.jproject.dtos.request.VeiculoUpdateDTO;
 import br.com.jproject.dtos.response.VeiculoResponseDTO;
 import br.com.jproject.entity.VeiculoEntity;
+import br.com.jproject.exceptions.MarcaInvalidaException;
 import br.com.jproject.exceptions.VeiculoNotFoundException;
 import br.com.jproject.factory.VeiculoFactory;
 import br.com.jproject.mapper.VeiculoMapper;
@@ -14,7 +15,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -68,9 +68,10 @@ public class VeiculoService {
         return veiculoMapper.veiculoEntityToVeiculoResponseDTO(veiculo);
     }
 
+    @Transactional
     public VeiculoResponseDTO createVeiculo(VeiculoRequestDTO veiculo) {
         if (marcaIsValida(veiculo.getMarca())) {
-            throw new IllegalArgumentException("Marca inválida");
+            throw new MarcaInvalidaException("Marca inválida");
         }
         VeiculoEntity newVeiculo = VeiculoFactory.createVeiculo(veiculo);
         veiculoRepository.persist(newVeiculo);
@@ -84,7 +85,7 @@ public class VeiculoService {
     public VeiculoResponseDTO updateVeiculo(Long id, VeiculoUpdateDTO veiculo) {
         VeiculoEntity veiculoEntity = veiculoRepository.findById(id);
         validaEntityIsPresent(veiculoEntity);
-        validaMarca(veiculo);
+        validaMarca(veiculo == null ? veiculoEntity.getMarca() : veiculo.getMarca());
         VeiculoEntity veiculoAtualizado = veiculoRepository.updateVeiculo(id, veiculo);
         return veiculoMapper.veiculoEntityToVeiculoResponseDTO(veiculoAtualizado);
     }
@@ -92,14 +93,14 @@ public class VeiculoService {
     public VeiculoResponseDTO patchVeiculo(Long id, VeiculoUpdateDTO veiculo) {
         VeiculoEntity veiculoEntity = veiculoRepository.findById(id);
         validaEntityIsPresent(veiculoEntity);
-        validaMarca(veiculo);
+        validaMarca(veiculo.getMarca() == null ? veiculoEntity.getMarca() : veiculo.getMarca());
         VeiculoEntity veiculoAtualizado = veiculoRepository.patchVeiculo(id, veiculo);
         return veiculoMapper.veiculoEntityToVeiculoResponseDTO(veiculoAtualizado);
     }
 
-    private void validaMarca(VeiculoUpdateDTO veiculo) {
-        if (marcaIsValida(veiculo.getMarca())) {
-            throw new IllegalArgumentException("Marca inválida");
+    private void validaMarca(String marca) {
+        if (marcaIsValida(marca)) {
+            throw new MarcaInvalidaException("Marca inválida");
         }
     }
 
@@ -125,7 +126,7 @@ public class VeiculoService {
         List<VeiculoEntity> veiculos = veiculoRepository.listAll();
         return veiculos.stream()
                 .collect(Collectors.groupingBy(
-                        veiculo -> (veiculo.getAno() / 10 * 10) + "s",
+                        veiculo -> (veiculo.getAno() / 10 * 10) + "",
                         Collectors.counting()
                 ));
     }

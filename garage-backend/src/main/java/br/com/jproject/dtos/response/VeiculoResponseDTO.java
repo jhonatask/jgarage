@@ -15,6 +15,7 @@ public class VeiculoResponseDTO {
     private String veiculo;
     private String marca;
     private Integer ano;
+    private String cor;
     private String descricao;
     private Boolean vendido;
     private String createdData;
