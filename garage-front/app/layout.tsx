@@ -2,6 +2,7 @@
 
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
+import { SnackbarProvider } from 'notistack';
 import "./globals.css";
 
 const theme = createTheme({
@@ -26,7 +27,10 @@ export default function RootLayout({
       <body>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {children}
+          <SnackbarProvider maxSnack={3}>
+            {children}
+          </SnackbarProvider>
+         
         </ThemeProvider>
       </body>
     </html>
