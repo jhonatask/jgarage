@@ -51,3 +51,9 @@ export const distribuicaoPorMarca = async () => {
   const response = await axios.get(`${API_URL}/distribuicao-fabricante`);
   return response.data;
 };
+
+// Função para buscar cadastrados na ultima semana
+export const cadastradosUltimaSemana = async () => {
+  const response = await axios.get(`${API_URL}/ultima-semana`);
+  return response.data;
+};

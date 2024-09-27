@@ -19,7 +19,7 @@ import {
   AccordionSummary, 
   AccordionDetails  } from '@mui/material';
 import VehicleModal from './components/VehicleModal';
-import {distribuicaoPorMarca, distribuicaoProDecada, updateVehicle, fetchVehicles, deleteVehicle, patchVehicle, addVehicle} from './api/apiService';
+import {distribuicaoPorMarca, distribuicaoProDecada, updateVehicle, cadastradosUltimaSemana, fetchVehicles, deleteVehicle, patchVehicle, addVehicle} from './api/apiService';
 import { enqueueSnackbar } from 'notistack';
 const Veiculos = () => {
 
@@ -91,6 +91,15 @@ const Veiculos = () => {
     }
   };
 
+  const searchUltimaSemana = async () => {
+    try {
+      const response = await cadastradosUltimaSemana();
+      setVehicles(response);
+    } catch (error) {
+      enqueueSnackbar('Erro ao buscar veículos: ' + error, { variant: 'error' });
+    }
+  }
+
   const handleDelete = async (id: number) => {
     try {
       await deleteVehicle(id);
@@ -148,8 +157,14 @@ const Veiculos = () => {
     searchVehicles(0).then(() => setIsLoadingVeiculos(false));
   };
 
+  const handleSearchUltimaSamana = () => {
+    setIsLoadingVeiculos(true)
+    searchUltimaSemana().then(() => setIsLoadingVeiculos(false));
+  };
+
   const handlePageChange = (event: any, value: number) => {
     setIsLoadingVeiculos(true)
+    setPage(value - 1);
     searchVehicles(value - 1).then(() => setIsLoadingVeiculos(false));
   };
 
@@ -245,10 +260,17 @@ const Veiculos = () => {
             onChange={(e) => setCor(e.target.value)}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Button variant="contained" color="primary" onClick={handleSearch}>
-            Buscar
-          </Button>
+        <Grid container  sx={{ margin: '5px 0' }} spacing={2} direction="row">
+          <Grid item>
+            <Button variant="contained" color="primary" onClick={handleSearch}>
+              Buscar
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button variant="contained" color="primary" onClick={handleSearchUltimaSamana}>
+              Cadastrados Ultima Semana
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
       {isLoadingVeiculos  ? (

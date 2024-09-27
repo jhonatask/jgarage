@@ -36,7 +36,7 @@ public class VeiculoRepository implements PanacheRepositoryBase<VeiculoEntity, L
         query.add("(:marca IS NULL OR marca = :marca)");
         query.add("AND (:ano IS NULL OR ano = :ano)");
         query.add("AND (:cor IS NULL OR cor = :cor)");
-        query.add("ORDER BY created ASC");
+        query.add("ORDER BY created DESC");
 
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("marca", filtro.marca);
